@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class TokenInterceptor implements HandlerInterceptor {
+
     @Autowired
     TokenManager tokenManager;
 
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
         try {
             System.out.println("prehandler :)");
