@@ -1,0 +1,8 @@
+com\practicafinal\configuration\CorsConfig.class
+com\practicafinal\manager\PostManager.class
+com\practicafinal\manager\JsonManager.class
+com\practicafinal\ServletInitializer.class
+com\practicafinal\entity\User.class
+com\practicafinal\repository\PostRepository.class
+com\practicafinal\entity\Post.class
+com\practicafinal\repository\UserRepository.class
