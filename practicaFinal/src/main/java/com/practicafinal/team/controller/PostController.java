@@ -6,6 +6,8 @@ import com.practicafinal.team.manager.PostManager;
 import com.practicafinal.team.manager.TokenManager;
 import com.practicafinal.team.manager.UserManager;
 import com.practicafinal.team.model.Post;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +31,18 @@ public class PostController {
     Gson gson;
     @GetMapping("/buscar") //GET MAPPING PORQUE EL METHOD ES 'GET', Y LO MISMO CON EL POST, PORQUE ES POST
     public List<Post> findByTitleOrContent(String buscar){
-        String s = "hola";
+        String s = buscar;
         System.out.println(this.postManager.findAllBytitleOrContent(s));
         return this.postManager.findAllBytitleOrContent(s);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> validateUser(@RequestBody String jsonLogin) throws UnsupportedEncodingException {
-        System.out.println(jsonLogin);
+    public ResponseEntity<String> validateUser(@RequestBody String jsonLogin) throws  JSONException {
+        JSONObject jsonObject = new JSONObject(jsonLogin);
+        JSONObject body = jsonObject.getJSONObject("body");
 
-
-        JsonObject jsonObject = gson.fromJson(jsonLogin,JsonObject.class);
-        String user = jsonObject.get("user").getAsString();
-        String pass = jsonObject.get("pass").getAsString();
+        String user = body.getString("user");
+        String pass = body.getString("pass");
 
         if(userManager.validUser(user,pass)){
             String token = tokenManager.createToken(user);
