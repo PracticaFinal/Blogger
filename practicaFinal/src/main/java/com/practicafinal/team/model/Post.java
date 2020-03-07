@@ -1,6 +1,7 @@
 package com.practicafinal.team.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "post")
@@ -27,6 +28,9 @@ public class Post {
 
     @Column(name = "lenguageTra")
     private String traductedLenguage;
+
+    @Column(name = "date")
+    private Date datePost;
 
     @ManyToOne
     @JoinColumn(
@@ -92,5 +96,21 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Date getDatePost() {
+        return datePost;
+    }
+
+    public void setDatePost(Date datePost) {
+        this.datePost = datePost;
     }
 }
