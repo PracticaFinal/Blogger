@@ -61,64 +61,24 @@
   };
   async function send(text,password) {
     console.log(text)
-  const login = await axios.post("http://localhost:8080/login",{
+  const login = await axios.get("http://localhost:8080/login",{
     method: 'POST',
     headers: {
       'Content-Type':'application/json'
     },
-    body: JSON.stringify({
-      user:text,
-      pass:password
-    })
-
+    body: {
+      user: text,
+      pass: password
+    }
   });
 
 
-  if(login.status == 401){
+  if(login.status === 401){
     console.log("no autorizado");
 
   } else{
-    const log = await login.text();
-    asd = log;
-    console.log(log);
     console.log("logeacion");
-    hola();
+    console.log(login.status)
   }
 }
-
-  var asd;/*
-  async function send() {
-    const login = await fetch("http://localhost:8080/login",{
-      method: 'POST',
-      credentials: "include",
-      headers: {
-        'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        user:this.text,
-        pass:this.password
-      })
-    });
-    if(login.status == 401){
-      console.log("no autorizado");
-    } else{
-      const log = await login.text();
-      asd = log;
-      console.log(log);
-      console.log("logeacion");
-      hola();
-    }
-  }*/
-  async function hola() {
-    const buscarFetch = await fetch("http://localhost:8080/listar",{
-      credentials: "include",
-      headers: {
-        'Authorization': 'Bearer '+ asd,//que deberia estar guardado en el local storage con la funcion de abajo pero no lo hice
-        'Content-Type':'application/x-www-form-urlencoded'
-      }
-    });
-    const busca = await buscarFetch.json();
-    console.log(busca);
-    console.log("hola");
-  }
 </script>

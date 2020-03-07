@@ -23,7 +23,7 @@
 
 
         <div>
-          <q-btn label="Submit" type="submit" @click="send"color="primary"/>
+          <q-btn label="Submit" type="submit" color="primary"/>
         </div>
       </q-form>
 
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     name: 'PageIndex',
     data () {
@@ -45,7 +46,7 @@
       onSubmit () {
         if (this.accept !== true) {
           console.log(this.password)
-          send()
+          send(this.text,this.password)
         }
         else {
           this.$q.notify({
@@ -56,47 +57,28 @@
           })
         }
       },
-      async send() {
-        const login = await this.$axios.post("http://localhost:8080/login?user="+this.text+"&password="+this.password,{
-          method: 'POST',
-          credentials: "include",
-          headers: {
-            'Content-Type':'application/json'
-          },
-          body: JSON.stringify({
-            user:this.text,
-            pass:this.password
-          })
-
-        });
-
-
-        if(login.status == 401){
-          console.log("no autorizado");
-
-        } else{
-          const log = await login.text();
-          asd = log;
-          console.log(log);
-          console.log("logeacion");
-          hola();
-        }
-      },
     }
   };
-  var asd;
-
-  async function hola() {
-    const buscarFetch = await fetch("http://localhost:8080/listar",{
-      credentials: "include",
+  async function send(text,password) {
+    console.log(text)
+    const login = await axios.post("http://localhost:8080/login",{
+      method: 'POST',
       headers: {
-        'Authorization': 'Bearer '+ asd,//que deberia estar guardado en el local storage con la funcion de abajo pero no lo hice
-        'Content-Type':'application/x-www-form-urlencoded'
+        'Content-Type':'application/json'
+      },
+      body: {
+        user: text,
+        pass: password
       }
-
     });
-    const busca = await buscarFetch.json();
-    console.log(busca);
-    console.log("hola");
+
+
+    if(login.status === 401){
+      console.log("no autorizado");
+
+    } else{
+      console.log("logeacion");
+      console.log(login.status)
+    }
   }
 </script>
