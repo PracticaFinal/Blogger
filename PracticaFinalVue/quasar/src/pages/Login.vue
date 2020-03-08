@@ -74,8 +74,9 @@
     if(login.status === 401){
 
     } else{
+      console.log(login.status)
       localStorage.setItem("id", login.data);
-      await this.$router.push({path: 'index'})
+      await this.$router.replace('/index')
     }
   }
 </script>

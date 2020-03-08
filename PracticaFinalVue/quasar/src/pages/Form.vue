@@ -1,6 +1,12 @@
 <template>
   <div class="q-pa-md" style="max-width: 400px">
-
+    <q-btn color="deep-orange" push @click="$router.replace('/index')">
+      <div class="row items-center no-wrap">
+        <div class="text-center">
+          Post<br>List
+        </div>
+      </div>
+    </q-btn>
     <q-form
       @submit="insertPost"
       @reset="onReset"
@@ -39,7 +45,20 @@
         <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
-
+    <q-btn color="deep-orange" id="record">
+      <div class="row items-center no-wrap">
+        <div class="text-center">
+          Start
+        </div>
+      </div>
+    </q-btn>
+    <q-btn color="deep-orange" id="stop">
+      <div class="row items-center no-wrap">
+        <div class="text-center">
+          Stop
+        </div>
+      </div>
+    </q-btn>
   </div>
 </template>
 
@@ -58,6 +77,7 @@
         tracontent: '',
         lenguages: [],
         namelenguages:[],
+        video:''
       }
     },
     created: async function(){
@@ -90,6 +110,54 @@
       }
       for (let i = 0; i <this.lenguages.length ; i++) {
         this.namelenguages.push(this.lenguages[i].name)
+      }
+      if (navigator.mediaDevices) {
+        var constraints = {audio: true};
+        var chunks = [];
+        let resposta;
+
+
+        navigator.mediaDevices.getUserMedia(constraints)
+          .then(function (stream) {
+
+            var mediaRecorder = new MediaRecorder(stream);
+
+
+            document.getElementById("record").onclick = function () {
+              mediaRecorder.start();
+            };
+
+            document.getElementById("stop").onclick = function () {
+              mediaRecorder.stop();
+              mediaRecorder.onstop = async function (e) {
+                var blob = new Blob(chunks, {'type': 'audio/ogg; codecs=opus'});
+                chunks = [];
+                const formData = new FormData();
+                formData.append("arxiu", blob);
+                formData.append("MethodName", "transcribe_sync");
+                formData.append("params", "{}");
+
+                let grabacio = await axios( {
+                  method: "POST",
+                  url: "http://server247.cfgs.esliceu.net/bloggeri18n/blogger.php",
+                  data: formData
+                });
+                if (grabacio.data[0].confianca >0.7) {
+                  resposta =grabacio.data[0].transcripcio;
+                  console.log(resposta)
+                }
+              };
+            };
+
+
+
+            mediaRecorder.ondataavailable = function (e) {
+              chunks.push(e.data);
+            }
+          })
+          .catch(function (err) {
+            console.log('The following error occurred: ' + err);
+          });
       }
     },
     methods: {
@@ -127,14 +195,9 @@
           }
         });
         let response = traducido.data
-        console.log(response)
         return response
       },
       alllenguages: async function(){
-        let obj = {
-          MethodName: 'languages',
-          params: ''
-        };
         const traducted = await axios({
           method: 'POST',
           url: "http://server247.cfgs.esliceu.net/bloggeri18n/blogger.php",
@@ -146,14 +209,6 @@
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         });
-        console.log(traducted)
-        /*const traducido =await axios.post("http://server247.cfgs.esliceu.net/bloggeri18n/blogger.php",{
-          method: "POST",
-          body:JSON.stringify(obj),
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          }
-        });*/
         return traducted.data;
       },
       insertPost: async function(){

@@ -9,12 +9,12 @@
     </q-btn>
     <div class="q-pa-md" >
       <li v-for="(posts) in this.posts" >
-        Title: {{posts.label.title}}
-        Content: {{posts.label.content}}
-        Traducted Title: {{posts.label.traductedTitle}}
-        Traducted Content: {{posts.label.traductedContent}}
-        Date of Post: {{posts.label.datePost}}
-        Posted by: {{posts.label.user.name}}
+        TITLE: {{posts.label.title}}
+        CONTENT: {{posts.label.content}}
+        TRADUCTED TITLE: {{posts.label.traductedTitle}}
+        TRADUCTED CONTENT: {{posts.label.traductedContent}}
+        DATE OF POST: {{posts.label.datePost}}
+        POSTED BY: {{posts.label.user.name}}
         <q-btn color="white" text-color="black" label="Delete" push @click="deletee(posts.label.id)" />
         <q-btn color="white" text-color="black" label="Update" @click="$router.replace({path: '/form', query: { postId: posts.label.id } })"/>
       </li>
