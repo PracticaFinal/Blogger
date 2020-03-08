@@ -10,6 +10,9 @@
         filled
         v-model="title"
         label="The title *"
+        @input="trans(title).then(function(value) {
+          tratitle = value
+        })"
         hint="the title of your post"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please type something']"
@@ -18,6 +21,9 @@
         filled
         v-model="content"
         label="The content *"
+        @input="trans(content).then(function(value) {
+          tracontent = value
+        })"
         hint="the content of your post"
         lazy-rules
         :rules="[ val => val && val.length > 0 || 'Please writte something on your content']"
@@ -42,14 +48,14 @@
   export default {
     data () {
       return {
-        ori: null,
-        tra: null,
-        title: null,
-        content: null,
-        len: null,
-        tralen: null,
-        tratitle: null,
-        tracontent: null,
+        ori: '',
+        tra: '',
+        title: '',
+        content: '',
+        len: '',
+        tralen: '',
+        tratitle: '',
+        tracontent: '',
         lenguages: [],
         namelenguages:[],
       }
@@ -91,6 +97,39 @@
         this.name = null
         this.age = null
       },
+      trans: async function(value){
+        let idiomaIni = "";
+        let idiomaTra = "";
+        for (let i = 0; i <this.lenguages.length ; i++) {
+          if (this.lenguages[i].name === this.len){
+            idiomaIni=this.lenguages[i].code
+          }
+          if (this.lenguages[i].name === this.tralen){
+            idiomaTra=this.lenguages[i].code
+          }
+        }
+
+        let obj = {
+          MethodName: 'translate',
+          params: {
+            source: idiomaIni,
+            target: idiomaTra,
+            text: value
+          }
+        };
+        console.log(value)
+        const traducido =await axios({
+          method: 'POST',
+          url:"http://server247.cfgs.esliceu.net/bloggeri18n/blogger.php",
+          data:obj,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          }
+        });
+        let response = traducido.data
+        console.log(response)
+        return response
+      },
       alllenguages: async function(){
         let obj = {
           MethodName: 'languages',
@@ -107,6 +146,7 @@
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         });
+        console.log(traducted)
         /*const traducido =await axios.post("http://server247.cfgs.esliceu.net/bloggeri18n/blogger.php",{
           method: "POST",
           body:JSON.stringify(obj),
