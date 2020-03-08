@@ -23,7 +23,7 @@ public class PostManager {
         return postRepository.findById(theId);
     }
 
-    public void deletePlaneta(int theId) {
+    public void deletePlaneta(long theId) {
         postRepository.deleteById(theId);
     }
 }

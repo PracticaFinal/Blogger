@@ -15,6 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,9 +51,11 @@ public class PostController {
 
         if(userManager.validUser(user,pass)){
             String token = tokenManager.createToken(user);
+            String id = String.valueOf(userManager.getId(user,pass));
             System.out.println(userManager.validUser(user,pass));
+            System.out.println(token);
 
-            return new ResponseEntity<>(token,HttpStatus.OK);
+            return new ResponseEntity<>(id,HttpStatus.OK);
 
         } else {
             System.out.println(userManager.validUser(user,pass));
@@ -59,9 +65,23 @@ public class PostController {
 
     }
     @PostMapping("/savePost")
-    public String savePost(@ModelAttribute("post") Post thePost) {
-        postManager.savePost(thePost);
-        return "redirect:/planetes";
+    public void savePost(@RequestBody String jsonLogin ) throws JSONException, ParseException {
+        JSONObject jsonObject = new JSONObject(jsonLogin);
+        JSONObject body = jsonObject.getJSONObject("body");
+        Post t = new Post();
+        t.setTitle(body.getString("title"));
+        t.setContent(body.getString("contentent"));
+        t.setTraductedTitle(body.getString("titletra"));
+        t.setTraductedContent(body.getString("contenttra"));
+        t.setLenguage(body.getString("lenguage"));
+        t.setTraductedLenguage(body.getString("tralenguage"));
+        t.setUser(userManager.getUser(body.getInt("iduser")));
+        System.out.println(body.getString("date"));
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        Date date = df.parse(body.getString("date"));
+        t.setDatePost(date);
+
+        postManager.savePost(t);
     }
 
     @GetMapping("/updateForm")
@@ -73,8 +93,8 @@ public class PostController {
     }
 
     @GetMapping("/delete")
-    public String deletePost(@RequestParam("idpost") int theId) {
+    public void deletePost(@RequestParam("idpost") long theId) {
+        System.out.println(theId);
         postManager.deletePlaneta(theId);
-        return "redirect:/planetes";
     }
 }

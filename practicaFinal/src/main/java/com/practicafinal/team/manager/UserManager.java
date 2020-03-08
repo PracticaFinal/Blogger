@@ -17,6 +17,12 @@ public class UserManager {
     public boolean validUser(String email, String pass){
         return (userRepository.findByEmailAndPassword(email,pass) != null);
     }
+    public int getId(String email, String pass){
+        return (int) userRepository.findByEmailAndPassword(email,pass).getId();
+    }
+    public User getUser(int id){
+        return userRepository.findById(id);
+    }
 
     public User jsonToUser(String json){
         JsonObject jsonObject = gson.fromJson(json,JsonObject.class);
