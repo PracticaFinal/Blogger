@@ -16,7 +16,7 @@
         Date of Post: {{posts.label.datePost}}
         Posted by: {{posts.label.user.name}}
         <q-btn color="white" text-color="black" label="Delete" push @click="deletee(posts.label.id)" />
-        <q-btn color="white" text-color="black" label="Update" @click=""/>
+        <q-btn color="white" text-color="black" label="Update" @click="$router.replace({path: '/form', query: { postId: posts.label.id } })"/>
       </li>
     </div>
   </q-page>
@@ -33,8 +33,7 @@
       }
     },
     created: async function(){
-      this.posts = await this.send(this.posts);
-      console.log(this.posts)
+      this.posts = await this.show(this.posts);
     },
 
     methods: {
@@ -48,10 +47,11 @@
           window.location.reload();
         });
       },
-      show: function () {
-        console.log(this.posts)
+      update: function(id){
+        ;
       },
-      send:async function(posts) {
+
+      show:async function(posts) {
         const postsjson = await axios.get("http://localhost:8080/buscar",{
           method: 'GET',
           headers: {
@@ -60,13 +60,11 @@
         });
         let arrayposts = [];
         postsjson.data.map(function(post){
-          console.log(post)
           arrayposts.push({
             label: post,
           });
         });
         posts = arrayposts;
-        console.log(posts)
         return posts
       },
 

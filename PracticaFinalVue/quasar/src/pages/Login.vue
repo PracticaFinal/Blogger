@@ -45,7 +45,6 @@
     methods: {
       onSubmit () {
         if (this.accept !== true) {
-          console.log(this.password)
           send(this.text,this.password)
         }
         else {
@@ -60,7 +59,6 @@
     }
   };
   async function send(text,password) {
-    console.log(text)
     const login = await axios.post("http://localhost:8080/login",{
       method: 'POST',
       headers: {
@@ -74,12 +72,10 @@
 
 
     if(login.status === 401){
-      console.log("no autorizado");
 
     } else{
       localStorage.setItem("id", login.data);
-      console.log("logeacion");
-      console.log(login.status)
+      await this.$router.push({path: 'index'})
     }
   }
 </script>

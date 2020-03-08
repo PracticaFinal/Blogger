@@ -56,10 +56,35 @@
     },
     created: async function(){
       this.lenguages = await this.alllenguages(this.posts);
+      if(this.$router.currentRoute.query.postId){
+        const postsjson = await axios.get("http://localhost:8080/buscar",{
+          method: 'GET',
+          headers: {
+            'Content-Type':'application/json'
+          }
+        });
+
+        for (let i = 0; i <postsjson.data.length ; i++) {
+          if (postsjson.data[i].id===this.$router.currentRoute.query.postId){
+            this.title = postsjson.data[i].title;
+            this.content = postsjson.data[i].content;
+            this.tratitle = postsjson.data[i].traductedTitle;
+            this.tracontent = postsjson.data[i].traductedContent;
+            for (let j = 0; j <this.lenguages.length ; j++) {
+              if (this.lenguages[j].code === postsjson.data[i].lenguage){
+                this.len=this.lenguages[j].name
+              }
+              if (this.lenguages[j].code === postsjson.data[i].traductedLenguage){
+                this.tralen=this.lenguages[j].name
+              }
+            }
+          }
+        }
+
+      }
       for (let i = 0; i <this.lenguages.length ; i++) {
         this.namelenguages.push(this.lenguages[i].name)
       }
-      console.log(this.lenguages)
     },
     methods: {
       onReset () {
@@ -89,19 +114,11 @@
             'Content-Type': 'application/x-www-form-urlencoded',
           }
         });*/
-        console.log(traducted);
         return traducted.data;
       },
       insertPost: async function(){
-        let idpost = this.getParameterByName('idpost')
+        let idpost = this.$router.currentRoute.query.postId
         let metodo = "POST";
-        if (idpost!=""){
-
-          metodo = "PATCH"
-        }
-        else{
-          metodo="POST"
-        }
         let idiomaIni = '';
         let idiomaTra = '';
         for (let i = 0; i <this.lenguages.length ; i++) {
@@ -114,6 +131,7 @@
         }
 
         let obj = {
+          id: idpost,
           titletra:this.tratitle,
           contenttra:this.tracontent,
           title:this.title,
@@ -123,14 +141,25 @@
           iduser: localStorage.getItem("id"),
           date : new Date()
         };
-        console.log(obj.date)
-        await axios.post("http://localhost:8080/savePost",{
-          method: metodo,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: obj
-        });
+        if (!idpost){
+          await axios.post("http://localhost:8080/savePost",{
+            method: metodo,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: obj
+          });
+        }
+        else {
+          await axios.post("http://localhost:8080/updateForm",{
+            method: metodo,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: obj
+          });
+        }
+
       },
       getParameterByName: function(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
