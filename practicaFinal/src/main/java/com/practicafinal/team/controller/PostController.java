@@ -69,6 +69,28 @@ public class PostController {
         JSONObject jsonObject = new JSONObject(jsonLogin);
         JSONObject body = jsonObject.getJSONObject("body");
         Post t = new Post();
+        t = constructorr(t,body);
+
+
+        postManager.savePost(t);
+    }
+
+    @PostMapping("/updateForm")
+    public void showFormForUpdate(@RequestBody String jsonLogin ) throws JSONException, ParseException {
+        JSONObject jsonObject = new JSONObject(jsonLogin);
+        JSONObject body = jsonObject.getJSONObject("body");
+        Post existente = postManager.findById(body.getInt("id"));
+        existente = constructorr(existente,body);
+        postManager.savePost(existente);
+
+    }
+
+    @GetMapping("/delete")
+    public void deletePost(@RequestParam("idpost") long theId) {
+        System.out.println(theId);
+        postManager.deletePlaneta(theId);
+    }
+    public Post constructorr(Post t,JSONObject body) throws JSONException, ParseException {
         t.setTitle(body.getString("title"));
         t.setContent(body.getString("contentent"));
         t.setTraductedTitle(body.getString("titletra"));
@@ -80,21 +102,7 @@ public class PostController {
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
         Date date = df.parse(body.getString("date"));
         t.setDatePost(date);
-
-        postManager.savePost(t);
+        return t;
     }
 
-    @GetMapping("/updateForm")
-    public String showFormForUpdate(@RequestParam("idpost") int theId, Model theModel) {
-        Optional<Post> thePost = postManager.getPlaneta(theId);
-        theModel.addAttribute("post", thePost);
-        theModel.addAttribute("isupdate", true);
-        return "postForm";
-    }
-
-    @GetMapping("/delete")
-    public void deletePost(@RequestParam("idpost") long theId) {
-        System.out.println(theId);
-        postManager.deletePlaneta(theId);
-    }
 }

@@ -19,7 +19,7 @@ public class PostManager {
         return postRepository.save(thePost);
     }
 
-    public Optional<Post> getPlaneta(int theId) {
+    public Post findById(int theId) {
         return postRepository.findById(theId);
     }
 
