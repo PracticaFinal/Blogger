@@ -1,32 +1,23 @@
 <template>
   <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-full.svg"
-    >
-    <div class="q-pa-md" style="max-width: 400px">
-
-      <q-form
-        @submit="onSubmit"
-        class="q-gutter-md"
-      >
-        <q-input filled v-model="text" label="Email" />
-        <q-input v-model="password" filled :type="isPwd ? 'password' : 'text'" hint="Password">
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
-
-
-        <div>
-          <q-btn label="Submit" type="submit" color="primary"/>
+    <q-btn color="deep-orange" push @click="$router.replace('/form')">
+      <div class="row items-center no-wrap">
+        <div class="text-center">
+          Add new<br>POST
         </div>
-      </q-form>
-
+      </div>
+    </q-btn>
+    <div class="q-pa-md" >
+      <li v-for="(posts) in this.posts" >
+        Title: {{posts.label.title}}
+        Content: {{posts.label.content}}
+        Traducted Title: {{posts.label.traductedTitle}}
+        Traducted Content: {{posts.label.traductedContent}}
+        Date of Post: {{posts.label.datePost}}
+        Posted by: {{posts.label.user.name}}
+        <q-btn color="white" text-color="black" label="Delete" push @click="deletee(posts.label.id)" />
+        <q-btn color="white" text-color="black" label="Update" @click=""/>
+      </li>
     </div>
   </q-page>
 </template>
@@ -38,47 +29,48 @@
     data () {
       return {
         isPwd: true,
-        password: '',
-        text: '',
+        posts: [],
       }
     },
+    created: async function(){
+      this.posts = await this.send(this.posts);
+      console.log(this.posts)
+    },
+
     methods: {
-      onSubmit () {
-        if (this.accept !== true) {
-          console.log(this.password)
-          send(this.text,this.password)
-        }
-        else {
-          this.$q.notify({
-            color: 'green-4',
-            textColor: 'white',
-            icon: 'cloud_done',
-            message: 'Submitted'
-          })
-        }
+      deletee: async function(id){
+        await axios.get("http://localhost:8080/delete?idpost="+parseInt(id),{
+          method: 'GET',
+          headers: {
+            'Content-Type':'application/json'
+          }
+        }).then(function() {
+          window.location.reload();
+        });
       },
+      show: function () {
+        console.log(this.posts)
+      },
+      send:async function(posts) {
+        const postsjson = await axios.get("http://localhost:8080/buscar",{
+          method: 'GET',
+          headers: {
+            'Content-Type':'application/json'
+          }
+        });
+        let arrayposts = [];
+        postsjson.data.map(function(post){
+          console.log(post)
+          arrayposts.push({
+            label: post,
+          });
+        });
+        posts = arrayposts;
+        console.log(posts)
+        return posts
+      },
+
     }
   };
-  async function send(text,password) {
-    console.log(text)
-  const login = await axios.get("http://localhost:8080/login",{
-    method: 'POST',
-    headers: {
-      'Content-Type':'application/json'
-    },
-    body: {
-      user: text,
-      pass: password
-    }
-  });
 
-
-  if(login.status === 401){
-    console.log("no autorizado");
-
-  } else{
-    console.log("logeacion");
-    console.log(login.status)
-  }
-}
 </script>

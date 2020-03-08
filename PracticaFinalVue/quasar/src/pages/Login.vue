@@ -77,6 +77,7 @@
       console.log("no autorizado");
 
     } else{
+      localStorage.setItem("id", login.data);
       console.log("logeacion");
       console.log(login.status)
     }
